@@ -52,7 +52,7 @@ def wait_for_ipc_connection(ipc_path, timeout=30):
                 break
             gevent.sleep(0.1)
         else:
-            raise ValueError("Unable to establish HTTP connection")
+            raise ValueError("Unable to establish IPC connection")
 
 
 @pytest.fixture()

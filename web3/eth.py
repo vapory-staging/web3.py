@@ -235,3 +235,6 @@ class Eth(object):
 
     def getCompilers(self):
         return self.request_manager.request_blocking("eth_getCompilers", [])
+
+    def getWork(self):
+        return self.request_manager.request_blocking("eth_getWork", [])
