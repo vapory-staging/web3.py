@@ -1,16 +1,9 @@
-import uuid
-import json
 import collections
 
 import rlp
 
-from web3.utils.crypto import sha3
-from web3.utils.string import force_text
 from web3.utils.address import to_address
-from web3.utils.types import (
-    is_string,
-    is_object,
-)
+from web3.utils.crypto import sha3
 from web3.utils.encoding import (
     to_decimal,
     encode_hex,
@@ -22,96 +15,17 @@ from web3.utils.transactions import (
     serialize_transaction,
     add_signature_to_transaction,
 )
-from web3.utils.compat import (
-    spawn,
-)
+
+from .base import BaseManager
+from .wrapper import ManagerWrapper
 
 
-class RequestManager(object):
-    def __init__(self, provider):
-        self.pending_requests = {}
-        self.provider = provider
-
-    def setProvider(self, provider):
-        self.provider = provider
-
-    def request_blocking(self, method, params):
-        """
-        Make a synchronous request using the provider
-        """
-        response_raw = self.provider.make_request(method, params)
-
-        if is_string(response_raw):
-            response = json.loads(force_text(response_raw))
-        elif is_object(response_raw):
-            response = response_raw
-
-        if "error" in response:
-            raise ValueError(response["error"])
-
-        return response['result']
-
-    def request_async(self, method, params):
-        request_id = uuid.uuid4()
-        self.pending_requests[request_id] = spawn(
-            self.request_blocking,
-            method,
-            params,
-        )
-        return request_id
-
-    def receive_blocking(self, request_id, timeout=None):
-        try:
-            request = self.pending_requests.pop(request_id)
-        except KeyError:
-            raise KeyError("Request for id:{0} not found".format(request_id))
-        else:
-            response_raw = request.get(timeout=timeout)
-
-        response = json.loads(response_raw)
-
-        if "error" in response:
-            raise ValueError(response["error"])
-
-        return response['result']
-
-    def receive_async(self, request_id, *args, **kwargs):
-        raise NotImplementedError("Callback pattern not implemented")
-
-
-class ManagerWrapper(object):
-    def __init__(self, wrapped_manager):
-        self.wrapped_manager = wrapped_manager
-
-    @property
-    def provider(self):
-        return self.wrapped_manager.provider
-
-    @property
-    def pending_requests(self):
-        return self.wrapped_manager.pending_requests
-
-    def setProvider(self, provider):
-        self.wrapped_manager.provider = provider
-
-    def request_blocking(self, *args, **kwargs):
-        return self.wrapped_manager.request_blocking(*args, **kwargs)
-
-    def request_async(self, *args, **kwargs):
-        return self.wrapped_manager.request_async(*args, **kwargs)
-
-    def receive_blocking(self, *args, **kwargs):
-        return self.wrapped_manager.receive_blocking(*args, **kwargs)
-
-    def receive_async(self, *args, **kwargs):
-        return self.wrapped_manager.receive_async(*args, **kwargs)
-
-
-class BaseSendRawTransactionMixin(ManagerWrapper):
+class BaseSendRawTransactionMixin(ManagerWrapper, BaseManager):
     _known_transactions = None
     _known_nonces = None
 
     def __init__(self, *args, **kwargs):
+        # TODO: extract transaction nonce tracking into it's own *thing*
         self._known_transactions = collections.defaultdict(set)
         self._known_nonces = collections.defaultdict(set)
         super(BaseSendRawTransactionMixin, self).__init__(*args, **kwargs)
