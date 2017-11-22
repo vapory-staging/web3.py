@@ -11,7 +11,7 @@ matrix:
       env: TOX_POSARGS="-e py36-integration-goethereum -e py35-integration-goethereum" GETH_VERSION=v1.7.2
     # ENS
     - python: "3.6"
-      env: TOX_POSARGS="-e py36-ens -e py35-ens"
+      env: TOX_POSARGS="-e py35-ens"
     # lint
     - python: "3.6"
       env: TOX_POSARGS="-e flake8"
@@ -55,7 +55,7 @@ addons:
       - deadsnakes
     packages:
       - python-dev
-      - python3
+      - python3.5
 script:
   - tox $TOX_POSARGS
 notifications:
