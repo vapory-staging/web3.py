@@ -35,6 +35,8 @@ before_install:
   - if [ -n "$GETH_VERSION" ]; then travis_retry sudo add-apt-repository -y ppa:gophers/archive; fi
   - if [ -n "$GETH_VERSION" ]; then travis_retry sudo apt-get update; fi
   - if [ -n "$GETH_VERSION" ]; then mkdir -p $HOME/.ethash; fi
+  - wget https://s3.amazonaws.com/travis-python-archives/binaries/ubuntu/14.04/x86_64/python-3.5.tar.bz2
+  - sudo tar xjf python-3.5.tar.bz2 --directory /
 install:
   - if [ -n "$GETH_VERSION" ]; then travis_retry sudo apt-get install -y golang-1.7 build-essential; fi
   - travis_retry pip install pip setuptools --upgrade
@@ -49,13 +51,6 @@ before_script:
   - if [ -n "$GETH_VERSION" ]; then $GETH_BINARY version; fi
   - if [ -n "$GETH_VERSION" ]; then $GETH_BINARY makedag 0 $HOME/.ethash; fi
   - pip freeze
-addons:
-  apt:
-    sources:
-      - deadsnakes
-    packages:
-      - python-dev
-      - python3.5
 script:
   - tox $TOX_POSARGS
 notifications:
