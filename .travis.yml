@@ -54,7 +54,8 @@ addons:
     sources:
       - deadsnakes
     packages:
-      - python3.5
+      - python-dev
+      - python3
 script:
   - tox $TOX_POSARGS
 notifications:
