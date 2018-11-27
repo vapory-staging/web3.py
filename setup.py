@@ -74,7 +74,7 @@ setup(
         "eth-abi>=2.0.0a1,<3.0.0",
         "eth-account>=0.2.1,<0.4.0",
         "eth-utils>=1.2.0,<2.0.0",
-        "ethpm>=0.1.4a6,<1",
+        "ethpm>=0.1.4a7,<1",
         "pytest-ethereum>=0.1.3a3,<1",
         "hexbytes>=0.1.0,<1.0.0",
         "lru-dict>=1.1.6,<2.0.0",
