@@ -12,6 +12,7 @@ from .utils import (
     get_open_port,
 )
 
+
 pytest_plugins = ["pytest_ethereum.plugins"]
 
 
